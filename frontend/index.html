@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANVIORA — Inicia sesión</title>
+  <meta name="description" content="ANVIORA: registra tu ánimo, tu sueño y tu estrés, y descubre patrones antes de que te cansen." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <div class="auth">
+    <!-- Panel decorativo: concepto de "cierre del día", de la luz de la tarde a la calma de la noche -->
+    <aside class="auth__panel-decorativo">
+      <p class="auth__marca">ANVIORA</p>
+      <h1 class="auth__titulo">Un minuto para revisar tu día</h1>
+      <p class="auth__subtitulo">
+        Registra tu ánimo, tu sueño y tu estrés, y descubre patrones antes de que te cansen.
+      </p>
+    </aside>
+
+    <main class="auth__panel-formulario">
+      <div class="auth__tarjeta">
+        <!-- Panel de inicio de sesión -->
+        <section id="panel-login">
+          <h2>Inicia sesión</h2>
+          <p id="error-login" class="mensaje mensaje--error oculto" role="alert"></p>
+
+          <form id="form-login" novalidate>
+            <div class="campo">
+              <label for="login-correo">Correo electrónico</label>
+              <input type="email" id="login-correo" name="correo" autocomplete="email" required />
+            </div>
+            <div class="campo">
+              <label for="login-contrasena">Contraseña</label>
+              <input type="password" id="login-contrasena" name="contrasena" autocomplete="current-password" required />
+            </div>
+            <button type="submit" id="boton-login" class="boton-primario boton-ancho">Iniciar sesión</button>
+          </form>
+
+          <p class="auth__pie">
+            ¿Aún no tienes cuenta?
+            <a href="#" id="mostrar-registro" class="boton-enlace">Crear una cuenta</a>
+          </p>
+        </section>
+
+        <!-- Panel de registro -->
+        <section id="panel-registro" class="oculto">
+          <h2>Crea tu cuenta</h2>
+          <p id="error-registro" class="mensaje mensaje--error oculto" role="alert"></p>
+
+          <form id="form-registro" novalidate>
+            <div class="campo">
+              <label for="registro-nombre">Nombre</label>
+              <input type="text" id="registro-nombre" name="nombre" autocomplete="name" minlength="2" required />
+            </div>
+            <div class="campo">
+              <label for="registro-correo">Correo electrónico</label>
+              <input type="email" id="registro-correo" name="correo" autocomplete="email" required />
+            </div>
+            <div class="campo">
+              <label for="registro-contrasena">Contraseña</label>
+              <input type="password" id="registro-contrasena" name="contrasena" autocomplete="new-password" minlength="8" required />
+              <p class="ayuda">Mínimo 8 caracteres.</p>
+            </div>
+            <button type="submit" id="boton-registro" class="boton-primario boton-ancho">Crear cuenta</button>
+          </form>
+
+          <p class="auth__pie">
+            ¿Ya tienes cuenta?
+            <a href="#" id="mostrar-login" class="boton-enlace">Inicia sesión</a>
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

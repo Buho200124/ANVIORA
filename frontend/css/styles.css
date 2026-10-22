@@ -1,0 +1,599 @@
+/* ============================================================
+   ANVIORA — Hoja de estilos base
+   Concepto: "cierre del día" — de la luz de la tarde a la calma
+   de la noche. Paleta de dusk (atardecer) para transmitir un
+   momento de pausa y reflexión, con contraste AA verificado
+   para texto normal sobre cada fondo usado.
+   ============================================================ */
+
+:root {
+  /* Paleta */
+  --tinta-noche: #1F2A44;
+  --acero: #3D5A80;
+  --acero-oscuro: #2C4560;
+  --ambar: #C97A3F;
+  --ambar-suave: #E0955A;
+  --terracota: #A24A50;
+  --salvia: #4F7358;
+  --niebla: #EDEFF2;
+  --lienzo: #FFFFFF;
+  --texto-principal: #1F2A44;
+  --texto-secundario: #52606F;
+  --borde-suave: #DCE2E8;
+
+  /* Tipografía */
+  --fuente-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --fuente-texto: "Karla", "Segoe UI", Roboto, sans-serif;
+
+  /* Forma */
+  --radio-grande: 28px;
+  --radio-medio: 16px;
+  --radio-pequeno: 10px;
+  --sombra-suave: 0 16px 40px rgba(31, 42, 68, 0.12);
+  --sombra-tenue: 0 4px 14px rgba(31, 42, 68, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--niebla);
+  color: var(--texto-principal);
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  color: var(--tinta-noche);
+  line-height: 1.2;
+  margin: 0 0 0.4em;
+}
+
+h1 { font-size: clamp(1.7rem, 1.3rem + 2vw, 2.5rem); }
+h2 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.6rem); }
+h3 { font-size: 1.05rem; }
+
+p {
+  margin: 0 0 1em;
+  max-width: 62ch;
+}
+
+a {
+  color: var(--acero);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--acero-oscuro);
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ambar-suave);
+  outline-offset: 2px;
+}
+
+.oculto {
+  display: none !important;
+}
+
+/* ---------- Botones ---------- */
+.boton-primario,
+.boton-secundario,
+.boton-enlace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radio-pequeno);
+  padding: 0.85em 1.4em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 100ms ease;
+}
+
+.boton-primario {
+  background: var(--acero);
+  color: #ffffff;
+}
+
+.boton-primario:hover:not(:disabled) {
+  background: var(--acero-oscuro);
+}
+
+.boton-primario:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.boton-primario:disabled {
+  background: #9AA8B6;
+  cursor: not-allowed;
+}
+
+.boton-secundario {
+  background: transparent;
+  border-color: var(--borde-suave);
+  color: var(--texto-principal);
+}
+
+.boton-secundario:hover {
+  border-color: var(--acero);
+  color: var(--acero);
+}
+
+.boton-enlace {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--acero);
+  font-weight: 600;
+}
+
+.boton-ancho {
+  width: 100%;
+}
+
+/* ---------- Formularios ---------- */
+.campo {
+  margin-bottom: 1.25rem;
+}
+
+.campo label,
+fieldset legend {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  color: var(--tinta-noche);
+}
+
+.campo input[type="text"],
+.campo input[type="email"],
+.campo input[type="password"],
+.campo input[type="number"],
+.campo textarea {
+  width: 100%;
+  padding: 0.75em 0.9em;
+  border-radius: var(--radio-pequeno);
+  border: 1.5px solid var(--borde-suave);
+  background: var(--lienzo);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--texto-principal);
+}
+
+.campo input:focus-visible,
+.campo textarea:focus-visible {
+  border-color: var(--acero);
+  outline: 3px solid rgba(61, 90, 128, 0.25);
+  outline-offset: 0;
+}
+
+.campo textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.campo .ayuda {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  margin-top: 0.35em;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+/* Escala tipo 1-5 (ánimo / estrés), construida sobre radios nativos
+   para conservar la accesibilidad estándar del teclado y lectores de pantalla. */
+.escala__opciones {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.escala__opcion {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.escala__opcion input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.escala__numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--borde-suave);
+  background: var(--lienzo);
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  color: var(--tinta-noche);
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.escala__texto {
+  font-size: 0.75rem;
+  color: var(--texto-secundario);
+}
+
+.escala__opcion input:checked ~ .escala__numero {
+  background: var(--acero);
+  border-color: var(--acero);
+  color: #ffffff;
+}
+
+.escala__opcion input:focus-visible ~ .escala__numero {
+  outline: 3px solid var(--ambar-suave);
+  outline-offset: 2px;
+}
+
+/* Selector de horas de sueño */
+.selector-sueno {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.selector-sueno input[type="range"] {
+  flex: 1;
+  accent-color: var(--acero);
+}
+
+.selector-sueno__valor {
+  min-width: 3.5rem;
+  text-align: right;
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  color: var(--acero);
+}
+
+/* Etiquetas de actividades (chips) */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  position: relative;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.chip__etiqueta {
+  display: inline-block;
+  padding: 0.5em 1em;
+  border-radius: 999px;
+  border: 1.5px solid var(--borde-suave);
+  color: var(--texto-secundario);
+  font-size: 0.9rem;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.chip input:checked ~ .chip__etiqueta {
+  background: var(--tinta-noche);
+  border-color: var(--tinta-noche);
+  color: #ffffff;
+}
+
+.chip input:focus-visible ~ .chip__etiqueta {
+  outline: 3px solid var(--ambar-suave);
+  outline-offset: 2px;
+}
+
+/* ---------- Mensajes de estado ---------- */
+.mensaje {
+  padding: 0.9em 1.1em;
+  border-radius: var(--radio-pequeno);
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.mensaje--error {
+  background: #FBEAE9;
+  color: #7A2E32;
+  border: 1px solid #EBC3C1;
+}
+
+.mensaje--exito {
+  background: #EAF2EB;
+  color: #2F4E36;
+  border: 1px solid #C7DECB;
+}
+
+/* ---------- Aviso legal (no clínico) ---------- */
+.aviso-legal {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  background: #FBF3EA;
+  border: 1px solid #EBD9C3;
+  color: #6B4A28;
+  border-radius: var(--radio-medio);
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.aviso-legal__marca {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.aviso-legal p {
+  margin: 0;
+  max-width: none;
+}
+
+/* ---------- Contenedor general ---------- */
+.pagina {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contenedor {
+  width: min(100% - 2.5rem, 1100px);
+  margin-inline: auto;
+}
+
+/* ---------- Autenticación (index.html) ---------- */
+.auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth__panel-decorativo {
+  position: relative;
+  padding: 2.5rem 1.75rem;
+  color: #ffffff;
+  background: linear-gradient(160deg, #1F2A44 0%, #3D5A80 55%, #C97A3F 130%);
+  overflow: hidden;
+}
+
+.auth__panel-decorativo::after {
+  content: "";
+  position: absolute;
+  inset: auto -20% -60% -20%;
+  height: 60%;
+  background: radial-gradient(closest-side, rgba(255,255,255,0.18), transparent 70%);
+}
+
+.auth__marca {
+  font-family: var(--fuente-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.auth__titulo {
+  color: #ffffff;
+  position: relative;
+}
+
+.auth__subtitulo {
+  color: rgba(255, 255, 255, 0.85);
+  position: relative;
+  max-width: 42ch;
+}
+
+.auth__panel-formulario {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+.auth__tarjeta {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--lienzo);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-suave);
+  padding: 2rem 1.75rem;
+}
+
+.auth__pie {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.92rem;
+  color: var(--texto-secundario);
+}
+
+/* ---------- Encabezado de app (dashboard / formulario diario) ---------- */
+.encabezado-app {
+  background: var(--tinta-noche);
+  color: #ffffff;
+  padding: 1.5rem 0 2.75rem;
+}
+
+.encabezado-app__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.encabezado-app__marca {
+  font-family: var(--fuente-display);
+  font-size: 1.25rem;
+}
+
+.encabezado-app__nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.encabezado-app__nav a {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.encabezado-app__saludo {
+  margin-top: 1.75rem;
+}
+
+.encabezado-app__saludo h1 {
+  color: #ffffff;
+}
+
+.encabezado-app__saludo p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- Tarjetas de contenido ---------- */
+.contenido-app {
+  flex: 1;
+  margin-top: -2rem;
+  padding-bottom: 3rem;
+}
+
+.tarjeta {
+  background: var(--lienzo);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-tenue);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.tarjeta__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Filtro de periodo (segmented control) ---------- */
+.segmentado {
+  display: inline-flex;
+  background: var(--niebla);
+  border-radius: 999px;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.segmentado button {
+  border: none;
+  background: transparent;
+  padding: 0.45em 1.1em;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  cursor: pointer;
+}
+
+.segmentado button.activo {
+  background: var(--tinta-noche);
+  color: #ffffff;
+}
+
+/* ---------- Gráfico ---------- */
+.grafico-contenedor {
+  position: relative;
+  height: 320px;
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--texto-secundario);
+}
+
+.estado-vacio a {
+  font-weight: 600;
+}
+
+/* ---------- Recomendaciones ---------- */
+.lista-recomendaciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.recomendacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radio-medio);
+  border-left: 5px solid var(--acero);
+  background: var(--niebla);
+}
+
+.recomendacion--alta { border-left-color: var(--terracota); }
+.recomendacion--media { border-left-color: var(--ambar); }
+.recomendacion--baja { border-left-color: var(--salvia); }
+
+.recomendacion__etiqueta {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--texto-secundario);
+  margin-bottom: 0.25em;
+}
+
+.recomendacion__contenido p {
+  margin: 0;
+  max-width: 56ch;
+}
+
+.recomendacion .boton-secundario {
+  flex-shrink: 0;
+  padding: 0.5em 1em;
+  font-size: 0.85rem;
+}
+
+/* ---------- Utilidades de carga ---------- */
+.cargando {
+  color: var(--texto-secundario);
+  font-style: italic;
+}

@@ -1,0 +1,70 @@
+/* ============================================================
+   ANVIORA — Reglas responsivas (mobile-first, 360px a 1920px)
+   Las reglas base viven en styles.css; aquí solo se progresa
+   el layout hacia pantallas más grandes.
+   ============================================================ */
+
+/* Tablet: 640px en adelante */
+@media (min-width: 640px) {
+  .auth__tarjeta {
+    padding: 2.5rem;
+  }
+
+  .tarjeta {
+    padding: 2.25rem;
+  }
+
+  .escala__numero {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+/* Escritorio: 1024px en adelante */
+@media (min-width: 1024px) {
+  .auth {
+    flex-direction: row;
+  }
+
+  .auth__panel-decorativo {
+    width: 46%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+  }
+
+  .auth__panel-formulario {
+    width: 54%;
+  }
+
+  .encabezado-app__saludo h1 {
+    font-size: 2.2rem;
+  }
+
+  .panel-doble {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .grafico-contenedor {
+    height: 380px;
+  }
+}
+
+/* Pantallas grandes */
+@media (min-width: 1440px) {
+  .contenedor {
+    width: min(100% - 4rem, 1280px);
+  }
+}
+
+/* Respeta la preferencia de movimiento reducido del sistema */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

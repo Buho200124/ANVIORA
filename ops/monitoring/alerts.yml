@@ -1,0 +1,30 @@
+# Reglas de alerta de ANVIORA. Se ven en Prometheus → Alerts (http://localhost:9090/alerts).
+groups:
+  - name: anviora
+    rules:
+      - alert: ServicioCaido
+        expr: up{job="anviora"} == 0
+        for: 1m
+        labels: { severidad: critica }
+        annotations:
+          resumen: "El servicio {{ $labels.servicio }} no responde"
+          detalle: "Prometheus no puede leer /metrics de {{ $labels.servicio }} desde hace más de 1 minuto. Revisa: docker compose ps y docker compose logs {{ $labels.servicio }}"
+
+      - alert: ErroresServidorAltos
+        expr: |
+          sum by (servicio) (rate(anviora_http_requests_total{estado=~"5.."}[5m]))
+            / sum by (servicio) (rate(anviora_http_requests_total[5m])) > 0.05
+        for: 5m
+        labels: { severidad: alta }
+        annotations:
+          resumen: "Más del 5 % de errores 5xx en {{ $labels.servicio }}"
+          detalle: "Busca en los logs líneas con nivel ERROR del servicio."
+
+      - alert: LatenciaAlta
+        expr: |
+          histogram_quantile(0.95, sum by (le, servicio) (rate(anviora_http_request_duration_seconds_bucket[5m]))) > 2
+        for: 5m
+        labels: { severidad: media }
+        annotations:
+          resumen: "La latencia p95 de {{ $labels.servicio }} supera 2 s"
+          detalle: "RNF-01 pide menos de 2 s. Revisa carga del equipo y el estado de PostgreSQL."

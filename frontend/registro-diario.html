@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANVIORA — Registro de hoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body class="pagina">
+  <header class="encabezado-app">
+    <div class="contenedor">
+      <div class="encabezado-app__barra">
+        <span class="encabezado-app__marca">ANVIORA</span>
+        <nav class="encabezado-app__nav">
+          <a href="dashboard.html">Mi dashboard</a>
+        </nav>
+      </div>
+      <div class="encabezado-app__saludo">
+        <h1>Registro de hoy</h1>
+        <p id="fecha-hoy"></p>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenido-app">
+    <div class="contenedor">
+      <div class="tarjeta" style="max-width: 42rem; margin-inline: auto;">
+        <p id="mensaje-error" class="mensaje mensaje--error oculto" role="alert"></p>
+        <p id="mensaje-exito" class="mensaje mensaje--exito oculto" role="status"></p>
+
+        <form id="form-registro-diario" novalidate>
+          <fieldset>
+            <legend>¿Cómo te sientes hoy?</legend>
+            <div class="escala__opciones">
+              <label class="escala__opcion">
+                <input type="radio" name="estado-animo" value="1" required />
+                <span class="escala__numero">1</span>
+                <span class="escala__texto">Muy bajo</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="estado-animo" value="2" />
+                <span class="escala__numero">2</span>
+                <span class="escala__texto">Bajo</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="estado-animo" value="3" />
+                <span class="escala__numero">3</span>
+                <span class="escala__texto">Neutral</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="estado-animo" value="4" />
+                <span class="escala__numero">4</span>
+                <span class="escala__texto">Bueno</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="estado-animo" value="5" />
+                <span class="escala__numero">5</span>
+                <span class="escala__texto">Muy bueno</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="campo">
+            <label for="horas-sueno">¿Cuántas horas dormiste anoche?</label>
+            <div class="selector-sueno">
+              <input type="range" id="horas-sueno" name="horas-sueno" min="0" max="14" step="0.5" value="7" />
+              <span id="valor-horas-sueno" class="selector-sueno__valor">7 h</span>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend>¿Qué tanto estrés sentiste hoy?</legend>
+            <div class="escala__opciones">
+              <label class="escala__opcion">
+                <input type="radio" name="nivel-estres" value="1" required />
+                <span class="escala__numero">1</span>
+                <span class="escala__texto">Muy bajo</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="nivel-estres" value="2" />
+                <span class="escala__numero">2</span>
+                <span class="escala__texto">Bajo</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="nivel-estres" value="3" />
+                <span class="escala__numero">3</span>
+                <span class="escala__texto">Moderado</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="nivel-estres" value="4" />
+                <span class="escala__numero">4</span>
+                <span class="escala__texto">Alto</span>
+              </label>
+              <label class="escala__opcion">
+                <input type="radio" name="nivel-estres" value="5" />
+                <span class="escala__numero">5</span>
+                <span class="escala__texto">Muy alto</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>¿Qué hiciste hoy?</legend>
+            <div class="chips">
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="ejercicio" />
+                <span class="chip__etiqueta">Ejercicio</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="trabajo" />
+                <span class="chip__etiqueta">Trabajo</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="estudio" />
+                <span class="chip__etiqueta">Estudio</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="socializar" />
+                <span class="chip__etiqueta">Socializar</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="descanso" />
+                <span class="chip__etiqueta">Descanso</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="familia" />
+                <span class="chip__etiqueta">Familia</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" name="etiquetas" value="ocio" />
+                <span class="chip__etiqueta">Ocio</span>
+              </label>
+            </div>
+            <div class="campo" style="margin-top: 0.9rem;">
+              <label for="otra-etiqueta">Otra actividad (opcional)</label>
+              <input type="text" id="otra-etiqueta" name="otra-etiqueta" maxlength="30" placeholder="Ej: voluntariado" />
+            </div>
+          </fieldset>
+
+          <div class="campo">
+            <label for="descripcion-texto">¿Quieres contarnos más sobre tu día? (opcional)</label>
+            <textarea id="descripcion-texto" name="descripcion-texto" maxlength="2000" rows="4"></textarea>
+            <p class="ayuda"><span id="contador-caracteres">0 / 2000</span></p>
+          </div>
+
+          <button type="submit" id="boton-guardar" class="boton-primario boton-ancho">Guardar registro</button>
+        </form>
+      </div>
+
+      <div class="aviso-legal" style="max-width: 42rem; margin: 1.5rem auto 0;">
+        <span class="aviso-legal__marca">Aviso</span>
+        <p>
+          ANVIORA es una herramienta de autoconocimiento y seguimiento preventivo.
+          No es un dispositivo médico ni realiza diagnósticos, y no reemplaza la
+          atención psicológica o psiquiátrica profesional.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/registro.js"></script>
+</body>
+</html>

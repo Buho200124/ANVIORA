@@ -1,0 +1,231 @@
+# ANVIORA - Orquestación de microservicios (fase Operate)
+#
+#   Levantar todo:            docker compose up -d --build
+#   Con monitoreo:            docker compose --profile monitoring up -d --build
+#   Ver estado y salud:       docker compose ps
+#   Ver logs de un servicio:  docker compose logs -f core-api
+#   Apagar:                   docker compose down      (los datos se conservan en volúmenes)
+#
+# Requiere un archivo .env (copia .env.example).
+
+name: anviora
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"   # rota los logs para que no llenen el disco
+    max-file: "3"
+
+x-entorno-comun: &entorno-comun
+  DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY:?Define JWT_SECRET_KEY en .env}
+  JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+  ENVIRONMENT: ${ENVIRONMENT:-development}
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  CORS_ORIGINS: ${CORS_ORIGINS:-*}
+  INTERNAL_API_KEY: ${INTERNAL_API_KEY:?Define INTERNAL_API_KEY en .env}
+
+services:
+  # ------------------------------------------------------------
+  # Base de datos
+  # ------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Define POSTGRES_USER en .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Define POSTGRES_DB en .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Solo se ejecuta la PRIMERA vez, cuando el volumen está vacío
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # Microservicio 1: autenticación
+  # ------------------------------------------------------------
+  auth-service:
+    build: ./services/auth-service
+    restart: unless-stopped
+    environment:
+      <<: *entorno-comun
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-1440}
+    depends_on:
+      db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # Microservicio 2: análisis de IA (pysentimiento). No usa base de datos.
+  # ------------------------------------------------------------
+  analysis-service:
+    build: ./services/analysis-service
+    restart: unless-stopped
+    environment:
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?Define INTERNAL_API_KEY en .env}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      PRECARGAR_MODELO: "true"
+    volumes:
+      # Caché del modelo: se descarga una sola vez y sobrevive a los reinicios
+      - modelos_hf:/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/ready', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 600s  # la primera vez descarga el modelo de IA
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # Microservicio 3: recomendaciones
+  # ------------------------------------------------------------
+  recommendation-service:
+    build: ./services/recommendation-service
+    restart: unless-stopped
+    environment:
+      <<: *entorno-comun
+    depends_on:
+      db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # API principal: registros diarios y dashboard
+  # ------------------------------------------------------------
+  core-api:
+    build: ./services/core-api
+    restart: unless-stopped
+    environment:
+      <<: *entorno-comun
+      ANALYSIS_SERVICE_URL: http://analysis-service:8002
+      RECOMMENDATION_SERVICE_URL: http://recommendation-service:8003
+    depends_on:
+      db: { condition: service_healthy }
+      analysis-service: { condition: service_started }
+      recommendation-service: { condition: service_started }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # Gateway Nginx + frontend: único servicio expuesto al exterior
+  # ------------------------------------------------------------
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    depends_on:
+      auth-service: { condition: service_healthy }
+      recommendation-service: { condition: service_healthy }
+      core-api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/gateway/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # Respaldos automáticos de PostgreSQL: uno cada 24 h, conserva 7 días
+  # ------------------------------------------------------------
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: ${POSTGRES_USER}
+      PGDATABASE: ${POSTGRES_DB}
+      PGHOST: db
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      db: { condition: service_healthy }
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        while true; do
+          archivo="/backups/anviora_$$(date +%Y%m%d_%H%M%S).dump"
+          if pg_dump -Fc -f "$$archivo.tmp"; then
+            mv "$$archivo.tmp" "$$archivo"
+            echo "[backup] OK: $$archivo"
+          else
+            rm -f "$$archivo.tmp"
+            echo "[backup] ERROR: no se pudo crear el respaldo"
+          fi
+          find /backups -name 'anviora_*.dump' -mtime +7 -delete
+          sleep 86400
+        done
+    networks: [anviora-net]
+    logging: *logging
+
+  # ------------------------------------------------------------
+  # Monitoreo (opcional): docker compose --profile monitoring up -d
+  # ------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    profiles: [monitoring]
+    restart: unless-stopped
+    volumes:
+      - ./ops/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./ops/monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks: [anviora-net]
+    logging: *logging
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    profiles: [monitoring]
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./ops/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./ops/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on: [prometheus]
+    networks: [anviora-net]
+    logging: *logging
+
+volumes:
+  pgdata:
+  modelos_hf:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  anviora-net:

@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  - job_name: anviora
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["auth-service:8001"]
+        labels: { servicio: auth-service }
+      - targets: ["analysis-service:8002"]
+        labels: { servicio: analysis-service }
+      - targets: ["recommendation-service:8003"]
+        labels: { servicio: recommendation-service }
+      - targets: ["core-api:8004"]
+        labels: { servicio: core-api }

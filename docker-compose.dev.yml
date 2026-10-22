@@ -1,0 +1,15 @@
+# Extra para desarrollo y demostraciones: expone cada microservicio en tu equipo
+# para que puedas abrir su /docs, /health y /metrics directamente.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+#
+# En producción NO uses este archivo: solo el gateway debe estar expuesto.
+services:
+  auth-service:
+    ports: ["8001:8001"]
+  analysis-service:
+    ports: ["8002:8002"]
+  recommendation-service:
+    ports: ["8003:8003"]
+  core-api:
+    ports: ["8004:8004"]

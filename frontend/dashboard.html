@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANVIORA — Mi dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body class="pagina">
+  <header class="encabezado-app">
+    <div class="contenedor">
+      <div class="encabezado-app__barra">
+        <span class="encabezado-app__marca">ANVIORA</span>
+        <nav class="encabezado-app__nav">
+          <a href="registro-diario.html">Registrar hoy</a>
+          <button type="button" id="boton-cerrar-sesion" class="boton-secundario" style="padding: 0.5em 1em; border-color: rgba(255,255,255,0.35); color: #fff;">
+            Cerrar sesión
+          </button>
+        </nav>
+      </div>
+      <div class="encabezado-app__saludo">
+        <h1>Así ha estado tu semana</h1>
+        <p>Tu ánimo, tu sueño y tu estrés, en un solo lugar.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenido-app">
+    <div class="contenedor">
+      <div class="aviso-legal" style="margin-bottom: 1.5rem;">
+        <span class="aviso-legal__marca">Aviso</span>
+        <p>
+          ANVIORA es una herramienta de autoconocimiento y seguimiento preventivo.
+          No es un dispositivo médico ni realiza diagnósticos, y no reemplaza la
+          atención psicológica o psiquiátrica profesional.
+        </p>
+      </div>
+
+      <div class="panel-doble">
+        <section class="tarjeta">
+          <div class="tarjeta__cabecera">
+            <h2>Ánimo, sueño y estrés</h2>
+            <div class="segmentado">
+              <button type="button" class="filtro-periodo activo" data-periodo="semanal">Semana</button>
+              <button type="button" class="filtro-periodo" data-periodo="mensual">Mes</button>
+            </div>
+          </div>
+
+          <div id="contenedor-grafico" class="grafico-contenedor">
+            <canvas id="grafico-tendencias"></canvas>
+          </div>
+          <div id="sin-datos" class="estado-vacio oculto">
+            <p>Aún no tienes registros en este período.</p>
+            <a href="registro-diario.html" class="boton-enlace">Registra cómo te sientes hoy</a>
+          </div>
+        </section>
+
+        <section class="tarjeta">
+          <div class="tarjeta__cabecera">
+            <h2>Recomendaciones para ti</h2>
+          </div>
+          <ul id="lista-recomendaciones" class="lista-recomendaciones oculto"></ul>
+          <div id="recomendaciones-vacio" class="estado-vacio oculto">
+            <p>Aún no hay recomendaciones. Vuelve después de registrar unos días seguidos.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/recomendaciones.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
