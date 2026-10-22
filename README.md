@@ -1,3 +1,4 @@
+
 # ANVIORA — Fase 5: *Operate* (microservicios)
 
 Sistema inteligente para el monitoreo, análisis y seguimiento del bienestar emocional.
@@ -111,3 +112,6 @@ anviora/
 ├── ops/monitoring/             # Prometheus, alertas y panel de Grafana
 └── docs/OPERACION.md           # guía de operación y runbook
 ```
+# ANVIORA
+Sistema inteligente para el monitoreo, análisis y seguimiento del bienestar emocional. Esta fase lleva el backend de las Fases 1–4 a **4 servicios independientes** y agrega todo lo necesario para **operarlos**: contenedores, chequeos de salud, logs, métricas, alertas y respaldos.
+
